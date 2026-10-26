@@ -1,0 +1,50 @@
+=====================================================================
+  CÓMO EJECUTAR VOXELCRAFT SIN QUE LA VENTANA SE CIERRE
+=====================================================================
+
+Si los archivos .bat se cierran solos y no ves qué pasa, haz esto:
+
+PASO 1: Abrir una terminal CMD
+-------------------------------------
+1. Presiona la tecla Windows + R
+2. Escribe: cmd
+3. Presiona Enter
+   (Se abrirá una ventana negra de CMD que NO se cierra)
+
+PASO 2: Entrar a la carpeta del juego
+-------------------------------------
+En la ventana negra, copia y pega esta línea y presiona Enter:
+  cd "C:\Users\Usuario\Desktop\minecraf optimizado"
+
+PASO 3: Instalar dependencias (primera vez solo)
+-----------------------------------------------
+Escribe esto y presiona Enter:
+  npm install
+
+Espera a que termine. Verás muchos mensajes de texto. Cuando termine,
+verás algo como "up to date, audited 311 packages".
+
+PASO 4: Iniciar el juego
+-----------------------------------------------
+Escribe esto y presiona Enter:
+  node server.js
+
+Verás: "VoxelCraft servidor en http://localhost:3000"
+
+PASO 5: Abrir el juego
+-----------------------------------------------
+Abre tu navegador (Chrome, Edge, etc.) y entra a:
+  http://localhost:3000
+
+Verás el menú: Jugar, Crear mundo, Multijugador, Opciones.
+
+PASO 6: Crear un mundo
+-----------------------------------------------
+1. Pulsa "Jugar"
+2. Pon un nombre al mundo
+3. Pulsa "Crear mundo"
+4. ¡Ya estás dentro!
+
+=====================================================================
+  Si algo falla, copia el texto de la ventana negra y pégalo aquí.
+=====================================================================

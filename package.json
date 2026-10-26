@@ -1,0 +1,25 @@
+{
+  "name": "voxelcraft",
+  "productName": "VoxelCraft",
+  "version": "1.0.0",
+  "description": "Motor voxel optimizado para Motorola E13 y PC",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack-win": "electron-builder --win"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.voxelcraft.game",
+    "win": {
+      "target": ["nsis"],
+      "icon": "icon.ico"
+    }
+  }
+}

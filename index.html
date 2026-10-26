@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>VoxelCraft — Motor Optimizado</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232ecc71'/><text x='50' y='75' font-size='70' text-anchor='middle' fill='%23fff' font-family='sans-serif'>V</text></svg>">
+</head>
+<body>
+
+<canvas id="gameCanvas"></canvas>
+<div id="crosshair"></div>
+<div id="hud">FPS: 0</div>
+<div id="chat"></div>
+<div id="hotbar"></div>
+<div class="btnT" id="btnInv">🎒</div>
+
+<!-- Controles táctiles -->
+<div class="joy">
+  <div class="dpad">
+    <div class="btnT" id="btnUp">▲</div>
+    <div class="btnT" id="btnLeft">◀</div>
+    <div class="btnT" id="btnDown">▼</div>
+    <div class="btnT" id="btnRight">▶</div>
+  </div>
+</div>
+<div class="rightPad">
+  <div class="btnT" id="btnJump">Saltar</div>
+  <div class="btnT" id="btnPlace">🧱</div>
+  <div class="btnT" id="btnBreak">⛏</div>
+</div>
+
+<!-- ========== MENÚ PRINCIPAL ========== -->
+<div class="overlay visible" id="menuMain">
+  <div style="max-width:420px;width:90%">
+    <div id="menuTitle">Voxel<span style="color:#2ecc71">Craft</span></div>
+    <button class="mcBtn" onclick="ui.openMenu('create')">Jugar</button>
+    <button class="mcBtn" onclick="ui.openMenu('multi')">Multijugador</button>
+    <button class="mcBtn secondary" onclick="ui.openMenu('options')">Opciones</button>
+    <button class="mcBtn secondary" onclick="ui.exitGame()">Salir</button>
+  </div>
+</div>
+
+<!-- ========== BARRA DE CARGA "TEAR OF DAWN" ========== -->
+<div class="overlay visible" id="loadingTearOfDawn" style="z-index:60">
+  <div style="text-align:center">
+    <div style="font-size:48px;color:#f1c40f;margin-bottom:8px;text-shadow:2px 2px 0 #000;letter-spacing:2px">Tear<span style="color:#2ecc71">Of</span>Dawn</div>
+    <div style="font-size:14px;color:#888;margin-bottom:20px">Indie Game Studio</div>
+    <div class="bar">
+      <div class="fill" id="tearFill" style="width:0%"></div>
+    </div>
+    <div id="tearTxt" style="margin-top:12px;font-size:13px;color:#ddd">Iniciando motor…</div>
+  </div>
+</div>
+
+<!-- ========== CREAR MUNDO ========== -->
+<div class="overlay" id="menuCreate">
+  <div style="max-width:420px;width:90%">
+    <div style="font-size:30px;color:#f1c40f;margin-bottom:16px;text-shadow:2px 2px 0 #000">Crear mundo</div>
+    <div id="savedWorlds"></div>
+    <div class="label">Nombre del mundo:</div>
+    <input class="inputBox" id="inpWorldName" placeholder="Mi Mundo" maxlength="24">
+    <div class="label">Semilla (opcional):</div>
+    <input class="inputBox" id="inpSeed" placeholder="12345" maxlength="12">
+    <div class="label">Tipo de mundo:</div>
+    <select id="selWorldType" style="width:260px;height:44px;margin:8px 0;padding:0 12px;border-radius:4px;border:2px solid #555;background:#1a1a1a;color:#fff;font-size:17px">
+      <option value="normal">Normal</option>
+      <option value="flat">Superplano</option>
+      <option value="amplified">Amplificado</option>
+    </select>
+    <div class="label">Modo de juego:</div>
+    <select id="selMode" style="width:260px;height:44px;margin:8px 0;padding:0 12px;border-radius:4px;border:2px solid #555;background:#1a1a1a;color:#fff;font-size:17px">
+      <option value="survival">Supervivencia</option>
+      <option value="creative">Creativo</option>
+    </select>
+    <button class="mcBtn" onclick="ui.createWorld()">Crear mundo</button>
+    <button class="mcBtn secondary" onclick="ui.openMenu('main')">← Volver</button>
+  </div>
+</div>
+
+<!-- ========== MULTIJUGADOR ========== -->
+<div class="overlay" id="menuMulti">
+  <div style="max-width:420px;width:90%">
+    <div style="font-size:30px;color:#f1c40f;margin-bottom:14px;text-shadow:2px 2px 0 #000">Multijugador</div>
+    <div class="label">Servidor:</div>
+    <input class="inputBox" id="inpServer" placeholder="ws://localhost:3000" value="ws://localhost:3000">
+    <div style="font-size:13px;color:#aaa;margin-top:4px">Usa localhost para jugar en tu PC.</div>
+    <button class="mcBtn" onclick="net.connect()">Conectar</button>
+    <button class="mcBtn secondary" onclick="ui.openMenu('main')">← Volver</button>
+    <div id="netStatus" style="margin-top:10px;font-size:14px;color:#f1c40f"></div>
+  </div>
+</div>
+
+<!-- ========== OPCIONES ========== -->
+<div class="overlay" id="menuOptions">
+  <div style="max-width:420px;width:90%">
+    <div style="font-size:30px;color:#f1c40f;margin-bottom:16px;text-shadow:2px 2px 0 #000">Opciones</div>
+    <label style="display:flex;align-items:center;gap:10px;font-size:16px;color:#ddd;margin:8px 0">
+      <input type="checkbox" id="chkFps" checked> Mostrar FPS
+    </label>
+    <label style="display:flex;align-items:center;gap:10px;font-size:16px;color:#ddd;margin:8px 0">
+      <input type="checkbox" id="chkTouch" checked> Controles táctiles
+    </label>
+    <div class="label" style="margin-top:10px">Distancia de render:</div>
+    <select id="selRD" style="width:260px;height:44px;margin:8px 0;padding:0 12px;border-radius:4px;border:2px solid #555;background:#1a1a1a;color:#fff;font-size:17px">
+      <option value="2">Muy cerca (2 chunks)</option>
+      <option value="3">Cerca (3 chunks)</option>
+      <option value="4">Normal (4 chunks)</option>
+      <option value="5">Lejos (5 chunks)</option>
+      <option value="6">Muy lejos (6 chunks)</option>
+    </select>
+    <div style="font-size:13px;color:#888;margin-top:10px">Motor WebGL2 · Optimizado para gama baja</div>
+    <button class="mcBtn secondary" onclick="ui.openMenu('main')">← Volver</button>
+  </div>
+</div>
+
+<!-- ========== INVENTARIO ========== -->
+<div class="overlay" id="invScreen">
+  <div id="invBox">
+    <div class="invTitle">Inventario</div>
+    <div id="invPalette" class="slotRow"></div>
+    <div id="invCraft" class="craftRow"></div>
+    <div id="invHand">En mano: —</div>
+    <div id="invGrid" class="slotGrid"></div>
+    <div id="invHot" class="slotRow"></div>
+    <div class="invHint">Toca un casillero para tomar o soltar · Cerrar: E o Esc</div>
+    <div class="invBtns">
+      <button class="mcBtn small" onclick="invUI.close()">Cerrar</button>
+      <button class="mcBtn small secondary" onclick="invUI.exitToMenu()">💾 Guardar y salir al menú</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== CARGA ========== -->
+<div class="overlay" id="loading">
+  <div id="loadTxt">Cargando mundo…</div>
+  <div class="bar"><div class="fill" id="loadFill"></div></div>
+</div>
+
+<script src="game.js"></script>
+<script src="network.js"></script>
+</body>
+</html>
